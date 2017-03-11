@@ -408,6 +408,13 @@ class ModelClass(Model):
         for child_class in self.children:
             text += '\n\n' + child_class.render()
 
+        ## Add ModelResource
+        text += '\n\n'
+        text += 'class {}Resource(ModelResource): \n'.format(self.name)
+        text += '    class Meta: \n'
+        text += '        model = {}'.format(self.name)
+        text += '\n\n'
+
         return text
 
 
@@ -486,7 +493,7 @@ class ManyToOneRelationship(Relationship):
         # common_fk_constraints = _get_common_fk_constraints(constraint.table, constraint.elements[0].column.table)
         # if len(common_fk_constraints) > 1:
         # self.kwargs['primaryjoin'] = "'{0}.{1} == {2}.{3}'".format(source_cls, constraint.columns[0], target_cls, constraint.elements[0].column.name)
-        if len(constraint.elements) > 1:  #  or 
+        if len(constraint.elements) > 1:  #  or
             self.kwargs['primaryjoin'] = "'and_({0})'".format(', '.join(['{0}.{1} == {2}.{3}'.format(source_cls, k.parent.name, target_cls, k.column.name)
                         for k in constraint.elements]))
         else:
@@ -523,6 +530,8 @@ class ManyToManyRelationship(Relationship):
 
 class CodeGenerator(object):
     header = '# coding: utf-8'
+    # Added manually ModelResource
+    header += '\nfrom flask_potion import ModelResource'
     footer = ''
 
     def __init__(self, metadata, noindexes=False, noconstraints=False,
@@ -538,7 +547,7 @@ class CodeGenerator(object):
 
         # exclude these column names from consideration when generating association tables
         _ignore_columns = ignore_cols or []
-        
+
         self.flask = flask
         if not self.flask:
             global _flask_prepend

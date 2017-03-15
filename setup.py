@@ -49,7 +49,8 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=(
         'SQLAlchemy >= 0.6.0',
-        'inflect >= 0.2.0'
+        'inflect >= 0.2.0',
+        'psycopg2'
     ) + extra_requirements,
     tests_require=['pytest', 'pytest-pep8'],
     cmdclass={'test': PyTest},
